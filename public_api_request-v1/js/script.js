@@ -1,36 +1,51 @@
 'use strict'
 
-function loadData() {
-  return window
-    .fetch('https://randomuser.me/api/?nat=us&results=12')
-    .then((response) => {
-      return response.json()
-    })
-    .then((data) => {
-      data.results.forEach((entry) => {
-        const card = document.createElement('DIV')
-        card.className = 'card'
-        const innerHTML = `
-            <div class="card-img-container">
-                <img class="card-img" src="${entry.picture.medium}" alt="profile picture">
-            </div>
-            <div class="card-info-container">
-                <h3 id="name" class="card-name cap">${entry.name.first} ${entry.name.last}</h3>
-                <p class="card-text">${entry.email}</p>
-                <p class="card-text cap">${entry.location.city}, ${entry.location.state}</p>
-            </div>`
+/*
+Gets the information needed in order to populate the page. Then calls the loadData function
+with the information received.
+*/
 
-        card.insertAdjacentHTML('beforeend', innerHTML)
+fetch('https://randomuser.me/api/?nat=us&results=12')
+  .then((response) => {
+    return response.json()
+  })
+  .then((data) => {
+    loadData(data)
+  })
 
-        card.addEventListener('click', () => {
-          showModal(entry)
-        })
-        document.querySelector('#gallery').insertAdjacentElement('beforeEnd', card)
-      })
-      console.log(data.results[0].dob.date)
-      console.log(data.results[0].dob.date.substring(0, 10))
+/*
+  loads the data on the page with the fetch data. Creates a new div class
+  with the specified class name. Provides the infroamtion of the user. (Name, picture, location, etc.)
+  Has an event listener in order to create the modal window.
+ */
+
+function loadData (data) {
+  data.results.forEach((entry) => {
+    const card = document.createElement('DIV')
+    card.className = 'card'
+    const innerHTML = `
+        <div class="card-img-container">
+            <img class="card-img" src="${entry.picture.medium}" alt="profile picture">
+        </div>
+        <div class="card-info-container">
+            <h3 id="name" class="card-name cap">${entry.name.first} ${entry.name.last}</h3>
+            <p class="card-text">${entry.email}</p>
+            <p class="card-text cap">${entry.location.city}, ${entry.location.state}</p>
+        </div>`
+
+    card.insertAdjacentHTML('beforeend', innerHTML)
+
+    card.addEventListener('click', () => {
+      showModal(entry)
     })
+    document.querySelector('#gallery').insertAdjacentElement('beforeEnd', card)
+  })
 }
+
+/*
+  Creates a modal window based based on the specified employee. Displays the employee's information.
+  (name, DOB, email, location, etc.)
+ */
 
 function showModal (employeeData) {
   const overlay = document.createElement('DIV')
